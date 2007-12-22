@@ -1,0 +1,33 @@
+#!/bin/sh
+# An init script for initramfs, for loading a system with tuxonice and a
+# dm-crypt encrypted swap device.
+#
+# Based upon a script from: http://www.disciplina.net/howto/initscript
+
+PATH="/bin:/sbin:/usr/bin:/usr/sbin"
+
+mount -n -t proc none /proc
+mount -n -t sysfs none /sys
+CMDLINE=`cat /proc/cmdline`
+
+for param in $CMDLINE ; do
+	case "$param" in
+		root=*|init=*)
+			eval "$param"
+			;;
+	esac
+done 
+
+if [ -z "$root" ]; then
+	echo "No root filesystem specified"
+	echo "Please append a correct \"root=\" boot option"
+	echo "Dropping you to a limited shell."
+	echo "press CTRL-ALT-Del for reboot"
+	exec /bin/sh
+fi
+
+# populate /dev with meaningful stuff
+mdev -s
+
+
+# vim: set ft=sh tw=78:
