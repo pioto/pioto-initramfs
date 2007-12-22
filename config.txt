@@ -1,5 +1,152 @@
+# Sample InitRamFS config file
+# vim: set ft=initramfs :
+
+# this file assumes sys-apps/busybox and sys-fs/e2fsprogs are built with
+# USE=static
+
+# my init script
+file /init /home/pioto/git/pioto-initramfs/init 0755 0 0
+
+# basic device nodes
 dir /dev 0755 0 0
 nod /dev/console 0600 0 0 c 5 1
+
+# mount point for our real root
 dir /root 0700 0 0
+
+dir /lib 0755 0 0
+# needed for run-init from klibc
+file /lib/klibc-MjlpNlsyOKq42HA5fCxrCeGFGi4.so /usr/lib/klibc/lib/klibc-MjlpNlsyOKq42HA5fCxrCeGFGi4.so 0755 0 0
+
+dir /etc 755 0 0
+
+# utilities needed to do anything useful
+dir /bin 0755 0 0
 dir /sbin 0755 0 0
-file /sbin/kinit /usr/lib/klibc/bin/kinit 0755 0 0
+dir /usr 755 0 0
+dir /usr/lib 755 0 0
+dir /usr/sbin 755 0 0
+dir /usr/bin 755 0 0
+file /bin/busybox /bin/busybox 0755 0 0
+# some busybox symlinks
+slink /bin/dd busybox 777 0 0
+slink /bin/cp busybox 777 0 0
+slink /bin/df busybox 777 0 0
+slink /bin/ln busybox 777 0 0
+slink /bin/ls busybox 777 0 0
+slink /bin/mv busybox 777 0 0
+slink /bin/ps busybox 777 0 0
+slink /bin/rm busybox 777 0 0
+slink /bin/sh busybox 777 0 0
+slink /bin/vi busybox 777 0 0
+slink /bin/ash busybox 777 0 0
+slink /bin/cat busybox 777 0 0
+slink /bin/pwd busybox 777 0 0
+slink /bin/sed busybox 777 0 0
+slink /bin/tar busybox 777 0 0
+slink /bin/date busybox 777 0 0
+slink /bin/echo busybox 777 0 0
+slink /bin/grep busybox 777 0 0
+slink /bin/gzip busybox 777 0 0
+slink /bin/kill busybox 777 0 0
+slink /bin/more busybox 777 0 0
+slink /bin/ping busybox 777 0 0
+slink /bin/sync busybox 777 0 0
+slink /bin/true busybox 777 0 0
+slink /bin/zcat busybox 777 0 0
+slink /bin/chgrp busybox 777 0 0
+slink /bin/chmod busybox 777 0 0
+slink /bin/chown busybox 777 0 0
+slink /bin/dmesg busybox 777 0 0
+slink /bin/egrep busybox 777 0 0
+slink /bin/false busybox 777 0 0
+slink /bin/fgrep busybox 777 0 0
+slink /bin/mkdir busybox 777 0 0
+slink /bin/mknod busybox 777 0 0
+slink /bin/mount busybox 777 0 0
+slink /bin/pidof busybox 777 0 0
+slink /bin/rmdir busybox 777 0 0
+slink /bin/sleep busybox 777 0 0
+slink /bin/touch busybox 777 0 0
+slink /bin/uname busybox 777 0 0
+slink /bin/gunzip busybox 777 0 0
+slink /bin/hostname busybox 777 0 0
+slink /bin/mktemp busybox 777 0 0
+slink /bin/umount busybox 777 0 0
+slink /bin/usleep busybox 777 0 0
+slink /usr/bin/[ ../../bin/busybox 777 0 0
+slink /usr/bin/du ../../bin/busybox 777 0 0
+slink /usr/bin/id ../../bin/busybox 777 0 0
+slink /usr/bin/tr ../../bin/busybox 777 0 0
+slink /usr/bin/wc ../../bin/busybox 777 0 0
+slink /usr/bin/cmp ../../bin/busybox 777 0 0
+slink /usr/bin/cut ../../bin/busybox 777 0 0
+slink /usr/bin/env ../../bin/busybox 777 0 0
+slink /usr/bin/tee ../../bin/busybox 777 0 0
+slink /usr/bin/tty ../../bin/busybox 777 0 0
+slink /usr/bin/yes ../../bin/busybox 777 0 0
+slink /usr/bin/chvt ../../bin/busybox 777 0 0
+slink /usr/bin/find ../../bin/busybox 777 0 0
+slink /usr/bin/expr ../../bin/busybox 777 0 0
+slink /usr/bin/free ../../bin/busybox 777 0 0
+slink /usr/bin/head ../../bin/busybox 777 0 0
+slink /usr/bin/deallocvt ../../bin/busybox 777 0 0
+slink /usr/bin/tail ../../bin/busybox 777 0 0
+slink /usr/bin/sort ../../bin/busybox 777 0 0
+slink /usr/bin/test ../../bin/busybox 777 0 0
+slink /usr/bin/time ../../bin/busybox 777 0 0
+slink /usr/bin/uniq ../../bin/busybox 777 0 0
+slink /usr/bin/wget ../../bin/busybox 777 0 0
+slink /usr/bin/dirname ../../bin/busybox 777 0 0
+slink /usr/bin/killall ../../bin/busybox 777 0 0
+slink /usr/bin/clear ../../bin/busybox 777 0 0
+slink /usr/bin/bzcat ../../bin/busybox 777 0 0
+slink /usr/bin/reset ../../bin/busybox 777 0 0
+slink /usr/bin/unzip ../../bin/busybox 777 0 0
+slink /usr/bin/which ../../bin/busybox 777 0 0
+slink /usr/bin/xargs ../../bin/busybox 777 0 0
+slink /usr/bin/strings ../../bin/busybox 777 0 0
+slink /usr/bin/logger ../../bin/busybox 777 0 0
+slink /usr/bin/openvt ../../bin/busybox 777 0 0
+slink /usr/bin/hexdump ../../bin/busybox 777 0 0
+slink /usr/bin/uptime ../../bin/busybox 777 0 0
+slink /usr/bin/whoami ../../bin/busybox 777 0 0
+slink /usr/bin/readlink ../../bin/busybox 777 0 0
+slink /usr/bin/install ../../bin/busybox 777 0 0
+slink /usr/bin/basename ../../bin/busybox 777 0 0
+slink /usr/bin/bunzip2 ../../bin/busybox 777 0 0
+slink /sbin/halt ../bin/busybox 777 0 0
+slink /sbin/init ../bin/busybox 777 0 0
+slink /sbin/klogd ../bin/busybox 777 0 0
+slink /sbin/route ../bin/busybox 777 0 0
+slink /sbin/poweroff ../bin/busybox 777 0 0
+slink /sbin/swapoff ../bin/busybox 777 0 0
+slink /sbin/syslogd ../bin/busybox 777 0 0
+slink /sbin/ifconfig ../bin/busybox 777 0 0
+slink /sbin/reboot ../bin/busybox 777 0 0
+slink /sbin/pivot_root ../bin/busybox 777 0 0
+slink /sbin/swapon ../bin/busybox 777 0 0
+slink /usr/sbin/chroot ../../bin/busybox 777 0 0
+# end of busybox insanity
+# cryptsetup, for opening our encrypted swap
+file /sbin/cryptsetup /sbin/cryptsetup 0755 0 0
+# lvm, for finding our encrypted swap
+# lvm configuration
+dir /etc/lvm 755 0 0
+file /etc/lvm/lvm.conf /etc/lvm/lvm.conf 644 0 0
+file /sbin/lvm /sbin/lvm 555 0 0
+slink /sbin/vgchange lvm 777 0 0
+slink /sbin/vgscan lvm 777 0 0
+# so we can attempt some basic disk recovery, at least
+file /sbin/e2fsck /sbin/e2fsck 0755 0 0
+
+dir /var 755 0 0
+dir /var/log 755 0 0
+dir /var/lock 755 0 0
+
+# proc and sysfs mountpoints
+dir /proc 755 0 0
+dir /sys 755 0 0
+
+# used at the end of init to switch to our real system
+file /sbin/run-init /usr/lib/klibc/bin/run-init 0755 0 0

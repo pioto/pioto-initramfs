@@ -15,6 +15,9 @@ for param in $CMDLINE ; do
 		root=*|init=*)
 			eval "$param"
 			;;
+		rescue)
+			rescue="y"
+			;;
 	esac
 done 
 
@@ -27,7 +30,39 @@ if [ -z "$root" ]; then
 fi
 
 # populate /dev with meaningful stuff
+echo "initramfs: scanning for device nodes"
 mdev -s
 
+echo "initramfs: finding lvm devices" 
+/sbin/vgscan 
+echo "initramfs: activating lvm devices" 
+/sbin/vgchange -ay
+echo "initramfs: creating crypt-swap" 
+# boot up will halt here until a key is typed in
+if [ ! -e /dev/mapper/vg0-swap ]; then
+	echo "Could not find swap device to resume from."
+	echo "Dumping you to a shell to fix this."
+	exec /bin/sh
+fi
+/bin/cryptsetup luksOpen crypt-swap /dev/mapper/vg0-swap
+
+# make sure we resume here, before we mount our root device
+echo "initramfs: activating tuxonice"
+echo swap:/dev/mapper/vg0-swap > /sys/power/tuxonice/resume
+echo 1 > /sys/power/tuxonice/do_resume
+
+echo "initramfs: mounting root device: $root" 
+mount -n $root /root -o ro
+
+echo "initramfs: umounting /sys and /proc"  
+umount -f /sys /proc
+
+if [ -n "$rescue" ]; then
+	echo "Going to a rescue shell."
+	exec /bin/sh
+fi
+
+echo "changing to $root and hand over to init" 
+exec run-init /root /sbin/init "$@"
 
 # vim: set ft=sh tw=78:
