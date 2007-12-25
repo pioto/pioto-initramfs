@@ -139,6 +139,8 @@ slink /sbin/vgchange lvm 777 0 0
 slink /sbin/vgscan lvm 777 0 0
 # so we can attempt some basic disk recovery, at least
 file /sbin/e2fsck /sbin/e2fsck 0755 0 0
+# and, so that we can make tuxonice happy
+file /sbin/tuxoniceui_text /sbin/tuxoniceui_text 0755 0 0
 
 dir /var 755 0 0
 dir /var/log 755 0 0

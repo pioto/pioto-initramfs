@@ -1,11 +1,24 @@
 #!/bin/sh
+# Copyright 2007 Mike Kelly <pioto@pioto.org>
+# Released under the terms of the GNU General Public License v2
+#
 # An init script for initramfs, for loading a system with tuxonice and a
 # dm-crypt encrypted swap device.
 #
 # Based upon a script from: http://www.disciplina.net/howto/initscript
 
 PATH="/bin:/sbin:/usr/bin:/usr/sbin"
+
+einfo() { echo -ne " \033[32;01m*\033[0m ${@}\n"; }
+ewarn() { echo -ne " \033[33;01m*\033[0m ${@}\n"; }
+eerror() { echo -ne " \033[31;01m*\033[0m ${@}\n"; }
+
+einfo "Pioto's initramfs booting..."
+
+#root="/dev/mapper/vg0-root"
 init="/sbin/init"
+resume="swap:/dev/mapper/crypt-swap0"
+resume_real="/dev/mapper/vg0-swap0"
 
 mount -n -t proc none /proc
 mount -n -t sysfs none /sys
@@ -13,57 +26,59 @@ CMDLINE=`cat /proc/cmdline`
 
 for param in $CMDLINE ; do
 	case "$param" in
-		root=*|init=*)
+		root=*|init=*|resume=*|resume_real=*)
 			eval "$param"
 			;;
 		rescue)
 			rescue="y"
 			;;
 	esac
-done 
+done
+
 
 if [ -z "$root" ]; then
-	echo "No root filesystem specified"
-	echo "Please append a correct \"root=\" boot option"
-	echo "Dropping you to a limited shell."
-	echo "press CTRL-ALT-Del for reboot"
+	eerror "No root filesystem specified"
+	eerror "Please append a correct \"root=\" boot option"
+	eerror "Dropping you to a limited shell."
+	eerror "press CTRL-ALT-Del for reboot"
 	exec /bin/sh
 fi
 
 # populate /dev with meaningful stuff
-echo "initramfs: scanning for device nodes"
+einfo "Scanning for device nodes..."
 mdev -s
 
-echo "initramfs: finding lvm devices" 
+einfo "Finding lvm devices..."
 /sbin/vgscan --mknodes
-echo "initramfs: activating lvm devices" 
+einfo "Activating lvm devices..."
 /sbin/vgchange -a y
-echo "initramfs: creating crypt-swap" 
+einfo "Opening $(basename "${resume#swap:}")..."
 # boot up will halt here until a key is typed in
-if [ ! -e /dev/mapper/vg0-swap0 ]; then
-	echo "Could not find swap device to resume from."
-	echo "Dumping you to a shell to fix this."
+if [ ! -e "$resume_real" ]; then
+	eerror "Could not find swap device to resume from."
+	eerror "Dumping you to a shell to fix this."
 	exec /bin/sh
 fi
-/sbin/cryptsetup luksOpen /dev/mapper/vg0-swap0 crypt-swap0
+/sbin/cryptsetup luksOpen "$resume_real" "$(basename "${resume#swap:}")"
 
 # make sure we resume here, before we mount our root device
-echo "initramfs: activating tuxonice"
-echo swap:/dev/mapper/crypt-swap0 > /sys/power/tuxonice/resume
+einfo "Activating tuxonice..."
+echo "$resume" > /sys/power/tuxonice/resume
 echo 1 > /sys/power/tuxonice/do_resume
 
-echo "initramfs: mounting root device: $root" 
+einfo "Mounting root device: $root ..."
 mount -n $root /root -o ro
 
 if [ -n "$rescue" ]; then
-	echo "Going to a rescue shell."
+	ewarn "\"rescue\" kernel parameter received."
+	ewarn "Going to a rescue shell..."
 	exec /bin/sh
 fi
 
-echo "initramfs: umounting /sys and /proc"  
+einfo "Unmounting /sys and /proc ..."
 umount -f /sys /proc
 
-echo "changing to $root and hand over to init" 
+einfo "Changing to $root and handing over to init..."
 exec run-init /root "$init" "$@"
 
 # vim: set ft=sh tw=78:
