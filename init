@@ -45,7 +45,7 @@ if [ ! -e /dev/mapper/vg0-swap0 ]; then
 	echo "Dumping you to a shell to fix this."
 	exec /bin/sh
 fi
-/sbin/cryptsetup luksOpen crypt-swap0 /dev/mapper/vg0-swap0
+/sbin/cryptsetup luksOpen /dev/mapper/vg0-swap0 crypt-swap0
 
 # make sure we resume here, before we mount our root device
 echo "initramfs: activating tuxonice"
