@@ -59,7 +59,8 @@ if [ ! -e "$resume_real" ]; then
 	eerror "Dumping you to a shell to fix this."
 	exec /bin/sh
 fi
-/sbin/cryptsetup luksOpen "$resume_real" "$(basename "${resume#swap:}")"
+/sbin/cryptsetup luksOpen "$resume_real" "$(basename "${resume#swap:}")" \
+	|| exit 1
 
 # make sure we resume here, before we mount our root device
 einfo "Activating tuxonice..."
