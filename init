@@ -63,9 +63,11 @@ fi
 	|| exit 1
 
 # make sure we resume here, before we mount our root device
-einfo "Activating tuxonice..."
-echo "$resume" > /sys/power/tuxonice/resume
-echo 1 > /sys/power/tuxonice/do_resume
+if [ -d /sys/power/tuxonice ] ; then
+	einfo "Activating tuxonice..."
+	echo "$resume" > /sys/power/tuxonice/resume
+	echo 1 > /sys/power/tuxonice/do_resume
+fi
 
 einfo "Mounting root device: $root ..."
 mount -n $root /root -o ro
