@@ -82,6 +82,7 @@ einfo "Unmounting /sys and /proc ..."
 umount -f /sys /proc
 
 einfo "Changing to $root and handing over to init..."
-exec run-init /root "$init" "$@"
+#exec run-init /root "$init" "$@"
+exec switch_root -c /dev/console /root "$init" "$@"
 
 # vim: set ft=sh tw=78:

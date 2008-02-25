@@ -121,6 +121,7 @@ slink /sbin/klogd ../bin/busybox 777 0 0
 slink /sbin/route ../bin/busybox 777 0 0
 slink /sbin/poweroff ../bin/busybox 777 0 0
 slink /sbin/swapoff ../bin/busybox 777 0 0
+slink /sbin/switch_root ../bin/busybox 777 0 0
 slink /sbin/syslogd ../bin/busybox 777 0 0
 slink /sbin/ifconfig ../bin/busybox 777 0 0
 slink /sbin/reboot ../bin/busybox 777 0 0
