@@ -65,6 +65,7 @@ fi
 # make sure we resume here, before we mount our root device
 if [ -d /sys/power/tuxonice ] ; then
 	einfo "Activating tuxonice..."
+	echo /sbin/tuxoniceui_text > /sys/power/tuxonice/user_interface/program
 	echo "$resume" > /sys/power/tuxonice/resume
 	echo 1 > /sys/power/tuxonice/do_resume
 fi
