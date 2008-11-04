@@ -1,5 +1,5 @@
-#!/bin/sh
-# Copyright 2007 Mike Kelly <pioto@pioto.org>
+#!/bin/ash
+# Copyright 2007-2008 Mike Kelly <pioto@pioto.org>
 # Released under the terms of the GNU General Public License v2
 #
 # An init script for initramfs, for loading a system with tuxonice and a
@@ -15,10 +15,10 @@ eerror() { echo -ne " \033[31;01m*\033[0m ${@}\n"; }
 
 einfo "Pioto's initramfs booting..."
 
-#root="/dev/mapper/vg0-root"
+root="/dev/mapper/vg-root"
 init="/sbin/init"
-resume="swap:/dev/mapper/crypt-swap0"
-resume_real="/dev/mapper/vg0-swap0"
+#resume="swap:/dev/mapper/crypt-swap0"
+#resume_real="/dev/mapper/vg0-swap0"
 
 mount -n -t proc none /proc
 mount -n -t sysfs none /sys
@@ -36,39 +36,44 @@ for param in $CMDLINE ; do
 done
 
 
-if [ -z "$root" ]; then
-	eerror "No root filesystem specified"
-	eerror "Please append a correct \"root=\" boot option"
-	eerror "Dropping you to a limited shell."
-	eerror "press CTRL-ALT-Del for reboot"
-	exec /bin/sh
-fi
+#if [ -z "$root" ]; then
+#	eerror "No root filesystem specified"
+#	eerror "Please append a correct \"root=\" boot option"
+#	eerror "Dropping you to a limited shell."
+#	eerror "press CTRL-ALT-Del for reboot"
+#	exec /bin/sh
+#fi
 
 # populate /dev with meaningful stuff
 einfo "Scanning for device nodes..."
 mdev -s
 
+# now, we decrypt our lvm pv
+einfo "Decrypting /dev/sda2..."
+/sbin/cryptsetup luksOpen /dev/sda2 sda2_crypt || exit 1
+
 einfo "Finding lvm devices..."
 /sbin/vgscan --mknodes
 einfo "Activating lvm devices..."
 /sbin/vgchange -a y
-einfo "Opening $(basename "${resume#swap:}")..."
-# boot up will halt here until a key is typed in
-if [ ! -e "$resume_real" ]; then
-	eerror "Could not find swap device to resume from."
-	eerror "Dumping you to a shell to fix this."
-	exec /bin/sh
-fi
-/sbin/cryptsetup luksOpen "$resume_real" "$(basename "${resume#swap:}")" \
-	|| exit 1
+
+#einfo "Opening $(basename "${resume#swap:}")..."
+## boot up will halt here until a key is typed in
+#if [ ! -e "$resume_real" ]; then
+#	eerror "Could not find swap device to resume from."
+#	eerror "Dumping you to a shell to fix this."
+#	exec /bin/sh
+#fi
+#/sbin/cryptsetup luksOpen "$resume_real" "$(basename "${resume#swap:}")" \
+#	|| exit 1
 
 # make sure we resume here, before we mount our root device
-if [ -d /sys/power/tuxonice ] ; then
-	einfo "Activating tuxonice..."
-	echo /sbin/tuxoniceui_text > /sys/power/tuxonice/user_interface/program
-	echo "$resume" > /sys/power/tuxonice/resume
-	echo 1 > /sys/power/tuxonice/do_resume
-fi
+#if [ -d /sys/power/tuxonice ] ; then
+#	einfo "Activating tuxonice..."
+#	echo /sbin/tuxoniceui_text > /sys/power/tuxonice/user_interface/program
+#	echo "$resume" > /sys/power/tuxonice/resume
+#	echo 1 > /sys/power/tuxonice/do_resume
+#fi
 
 einfo "Mounting root device: $root ..."
 mount -n $root /root -o ro
