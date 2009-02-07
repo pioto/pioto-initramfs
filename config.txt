@@ -5,7 +5,10 @@
 # USE=static
 
 # my init script
-file /init /root/git/pioto-initramfs/init 0755 0 0
+file /init /home/pioto/git/pioto-initramfs/init 0755 0 0
+
+# fake udevadm to shut up cryptsetup
+file /sbin/udevadm /home/pioto/git/pioto-initramfs/udevadm 0755 0 0
 
 # basic device nodes
 dir /dev 0755 0 0
@@ -15,8 +18,6 @@ nod /dev/console 0600 0 0 c 5 1
 dir /root 0700 0 0
 
 dir /lib 0755 0 0
-# needed for run-init from klibc
-#file /lib/klibc-MjlpNlsyOKq42HA5fCxrCeGFGi4.so /usr/lib/klibc/lib/klibc-MjlpNlsyOKq42HA5fCxrCeGFGi4.so 0755 0 0
 
 dir /etc 755 0 0
 
@@ -131,7 +132,7 @@ slink /sbin/mdev ../bin/busybox 777 0 0
 slink /usr/sbin/chroot ../../bin/busybox 777 0 0
 # end of busybox insanity
 # cryptsetup, for opening our encrypted swap
-file /sbin/cryptsetup /usr/sbin/cryptsetup 0755 0 0
+file /sbin/cryptsetup /sbin/cryptsetup.static 0755 0 0
 # lvm, for finding our encrypted swap
 # lvm configuration
 dir /etc/lvm 755 0 0
@@ -139,10 +140,6 @@ file /etc/lvm/lvm.conf /etc/lvm/lvm.conf 644 0 0
 file /sbin/lvm /usr/sbin/lvm.static 555 0 0
 slink /sbin/vgchange lvm 777 0 0
 slink /sbin/vgscan lvm 777 0 0
-# so we can attempt some basic disk recovery, at least
-#file /sbin/e2fsck /sbin/e2fsck 0755 0 0
-# and, so that we can make tuxonice happy
-#file /sbin/tuxoniceui_text /sbin/tuxoniceui_text 0755 0 0
 
 dir /var 755 0 0
 dir /var/log 755 0 0
@@ -151,6 +148,3 @@ dir /var/lock 755 0 0
 # proc and sysfs mountpoints
 dir /proc 755 0 0
 dir /sys 755 0 0
-
-# used at the end of init to switch to our real system
-#file /sbin/run-init /usr/lib/klibc/bin/run-init 0755 0 0

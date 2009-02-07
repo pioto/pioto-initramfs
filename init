@@ -15,7 +15,7 @@ eerror() { echo -ne " \033[31;01m*\033[0m ${@}\n"; }
 
 einfo "Pioto's initramfs booting..."
 
-root="/dev/mapper/vg-root"
+root="/dev/mapper/Exherbo-Root"
 init="/sbin/init"
 #resume="swap:/dev/mapper/crypt-swap0"
 #resume_real="/dev/mapper/vg0-swap0"
@@ -49,8 +49,8 @@ einfo "Scanning for device nodes..."
 mdev -s
 
 # now, we decrypt our lvm pv
-einfo "Decrypting /dev/sda2..."
-/sbin/cryptsetup luksOpen /dev/sda2 sda2_crypt || exit 1
+einfo "Decrypting /dev/sda6..."
+/sbin/cryptsetup luksOpen /dev/sda6 sda6_crypt || exit 1
 
 einfo "Finding lvm devices..."
 /sbin/vgscan --mknodes
@@ -76,7 +76,7 @@ einfo "Activating lvm devices..."
 #fi
 
 einfo "Mounting root device: $root ..."
-mount -n $root /root -o ro
+mount -n -t ext4 $root /root -o ro
 
 if [ -n "$rescue" ]; then
 	ewarn "\"rescue\" kernel parameter received."
