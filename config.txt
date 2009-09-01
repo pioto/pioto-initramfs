@@ -5,10 +5,7 @@
 # USE=static
 
 # my init script
-file /init /home/pioto/git/pioto-initramfs/init 0755 0 0
-
-# fake udevadm to shut up cryptsetup
-file /sbin/udevadm /home/pioto/git/pioto-initramfs/udevadm 0755 0 0
+file /init /home/pioto/git/personal/pioto-initramfs/init 0755 0 0
 
 # basic device nodes
 dir /dev 0755 0 0
