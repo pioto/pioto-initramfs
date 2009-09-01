@@ -134,7 +134,7 @@ file /sbin/cryptsetup /sbin/cryptsetup.static 0755 0 0
 # lvm configuration
 dir /etc/lvm 755 0 0
 file /etc/lvm/lvm.conf /etc/lvm/lvm.conf 644 0 0
-file /sbin/lvm /usr/sbin/lvm.static 555 0 0
+file /sbin/lvm /sbin/lvm.static 555 0 0
 slink /sbin/vgchange lvm 777 0 0
 slink /sbin/vgscan lvm 777 0 0
 
