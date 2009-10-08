@@ -25,7 +25,7 @@ dir /usr 755 0 0
 dir /usr/lib 755 0 0
 dir /usr/sbin 755 0 0
 dir /usr/bin 755 0 0
-file /bin/busybox /bin/bb 0755 0 0
+file /bin/busybox /bin/busybox-static 0755 0 0
 # some busybox symlinks
 slink /bin/dd busybox 777 0 0
 slink /bin/cp busybox 777 0 0
