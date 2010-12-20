@@ -1,5 +1,5 @@
 #!/bin/ash
-# Copyright 2007-2008 Mike Kelly <pioto@pioto.org>
+# Copyright 2007-2010 Mike Kelly <pioto@pioto.org>
 # Released under the terms of the GNU General Public License v2
 #
 # An init script for initramfs, for loading a system with tuxonice and a
@@ -45,8 +45,10 @@ done
 #fi
 
 # populate /dev with meaningful stuff
-einfo "Scanning for device nodes..."
-mdev -s
+#einfo "Scanning for device nodes..."
+#mdev -s
+einfo "Mounting devtmpfs..."
+mount -t devtmpfs devtmpfs /dev
 
 # now, we decrypt our lvm pv
 einfo "Decrypting /dev/sda6..."
@@ -77,6 +79,8 @@ einfo "Activating lvm devices..."
 
 einfo "Mounting root device: $root ..."
 mount -n -t ext4 $root /root -o ro
+einfo "Moving /dev to /root/dev..."
+mount --move /dev /root/dev
 
 if [ -n "$rescue" ]; then
 	ewarn "\"rescue\" kernel parameter received."
